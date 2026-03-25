@@ -1,9 +1,9 @@
 A=[[2 0 -4 6];[4 5 1 0];[0 2 6 -1];[-3 8 9 1]];
 
-fprintf('%.2f\n', det_gauss(A));
+fprintf('det(A)=%.2f\n', det_gauss(A));
 
-B=[[1 2 3];[4 5 6]];
-fprintf('%.2f\n', det_gauss(B));
+%B=[[1 2 3];[4 5 6]];
+%fprintf('det(B)=%.2f\n', det_gauss(B));
 
 function D=det_gauss(A)
     Asize=size(A);
@@ -21,8 +21,9 @@ function D=det_gauss(A)
         end
     end
     
-    D=1;
-    for k=1:n
-        D = D * A(k, k);
-    end
+    %D=1;
+    %for k=1:n
+    %    D = D * A(k, k);
+    %end
+    D=prod(diag(A)); % get the product of main diagonal elements
 end
