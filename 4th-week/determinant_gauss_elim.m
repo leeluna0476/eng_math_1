@@ -6,11 +6,13 @@ fprintf('det(A)=%.2f\n', det_gauss(A));
 %fprintf('det(B)=%.2f\n', det_gauss(B));
 
 function D=det_gauss(A)
+    % check if A is a square matrix
     Asize=size(A);
     if Asize(1)~=Asize(2)
         error('The input is not a square matrix.');
     end
-
+    
+    % make an upper triangular matrix
     n = Asize(1);
     for k=1:n
         for i=k+1:n
@@ -21,9 +23,6 @@ function D=det_gauss(A)
         end
     end
     
-    %D=1;
-    %for k=1:n
-    %    D = D * A(k, k);
-    %end
-    D=prod(diag(A)); % get the product of main diagonal elements
+    % get the product of main diagonal elements
+    D=prod(diag(A));
 end
