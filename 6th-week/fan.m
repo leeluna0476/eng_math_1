@@ -16,12 +16,12 @@ r1=2;
 r2=4;
 c1=zeros(3,3600);
 c2=zeros(3,3600);
-for th=1:1:3600
-    rad=th*pi/1800;
-    c1(1,th)=r1*cos(rad);
-    c1(2,th)=r1*sin(rad);
-    c2(1,th)=r2*cos(rad);
-    c2(2,th)=r2*sin(rad);
+for deg=1:1:3600
+    th=deg*pi/1800;
+    c1(1,deg)=r1*cos(th);
+    c1(2,deg)=r1*sin(th);
+    c2(1,deg)=r2*cos(th);
+    c2(2,deg)=r2*sin(th);
 end
 
 % make four buttons
@@ -76,14 +76,14 @@ axis([-40 40 -40 25]);
 
 global trig;
 trig=0;
-th=0;
+deg=0;
 while true
     % update s by trig
     s=update_s();
 
-    % calculate the new coordinates of the blades by the new th
-    rad=th*pi/180;
-    R=[cos(rad) sin(rad) 0; -sin(rad) cos(rad) 0; 0 0 1];
+    % calculate the new coordinates of the blades by the new deg
+    th=deg*pi/180;
+    R=[cos(th) sin(th) 0; -sin(th) cos(th) 0; 0 0 1];
     t1=R*b1;
     t2=R*b2;
     t3=R*b3;
@@ -94,7 +94,7 @@ while true
     set(bf3, 'XData', t3(1,:), 'YData', t3(2,:));
 
     % update the rotation degree
-    th=mod((th+s),360);
+    deg=mod((deg+s),360);
 
     % according to matlab pause manual:
     % pause(n) gives cpu some time to rest for n seconds
