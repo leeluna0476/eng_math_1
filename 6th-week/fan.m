@@ -66,10 +66,10 @@ patch(but3(1,:),but3(2,:), 'k', 'ButtonDownFcn', @(~,~) get_click(2));
 patch(but4(1,:),but4(2,:), 'k', 'ButtonDownFcn', @(~,~) get_click(3));
 
 % write the button texts
-text(but1(1,1)+4, but1(2,1)+5, '00', 'Color', 'white', 'HitTest','off');
-text(but2(1,1)+4, but2(2,1)+5, '01', 'Color', 'white', 'HitTest','off');
-text(but3(1,1)+4, but3(2,1)+5, '10', 'Color', 'white', 'HitTest','off');
-text(but4(1,1)+4, but4(2,1)+5, '11', 'Color', 'white', 'HitTest','off');
+text(but1(1,1)+4, but1(2,1)+5, '00', 'Color', 'white');
+text(but2(1,1)+4, but2(2,1)+5, '01', 'Color', 'white');
+text(but3(1,1)+4, but3(2,1)+5, '10', 'Color', 'white');
+text(but4(1,1)+4, but4(2,1)+5, '11', 'Color', 'white');
 
 % 축 제한 거는 건 그림 다 그리고 나서.
 axis([-40 40 -40 25]);
