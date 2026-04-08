@@ -14,15 +14,25 @@ b3=R*b2;
 % the pivotal circles
 r1=2;
 r2=4;
-c1=zeros(3,3600);
-c2=zeros(3,3600);
-for deg=1:1:3600
-    th=deg*pi/1800;
-    c1(1,deg)=r1*cos(th);
-    c1(2,deg)=r1*sin(th);
-    c2(1,deg)=r2*cos(th);
-    c2(2,deg)=r2*sin(th);
-end
+c1=zeros(2,3600);
+c2=zeros(2,3600);
+% for deg=1:1:3600
+%     th=deg*pi/1800;
+%     c1(1,deg)=r1*cos(th);
+%     c1(2,deg)=r1*sin(th);
+%     c2(1,deg)=r2*cos(th);
+%     c2(2,deg)=r2*sin(th);
+% end
+
+% 좀 matlab처럼 써보기
+deg=0.1:0.1:360;
+th=pi/180*deg;
+
+c1(1,:)=r1*cos(th);
+c1(2,:)=r1*sin(th);
+
+c2(1,:)=r2*cos(th);
+c2(2,:)=r2*sin(th);
 
 % make four buttons
 but1=[-23 -13 -13 -23 -23;
