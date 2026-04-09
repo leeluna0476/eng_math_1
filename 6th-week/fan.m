@@ -11,22 +11,15 @@ b2=R*b1;
 % the third blade
 b3=R*b2;
 
-% the pivotal circles
+% make the circles
 r1=2;
 r2=4;
-c1=zeros(2,3600);
-c2=zeros(2,3600);
-% for deg=1:1:3600
-%     th=deg*pi/1800;
-%     c1(1,deg)=r1*cos(th);
-%     c1(2,deg)=r1*sin(th);
-%     c2(1,deg)=r2*cos(th);
-%     c2(2,deg)=r2*sin(th);
-% end
-
-% 좀 matlab처럼 써보기
+r3=25;
 deg=0.1:0.1:360;
 th=pi/180*deg;
+c1=ones(3,3600);
+c2=ones(3,3600);
+c3=ones(3,3600);
 
 c1(1,:)=r1*cos(th);
 c1(2,:)=r1*sin(th);
@@ -34,9 +27,23 @@ c1(2,:)=r1*sin(th);
 c2(1,:)=r2*cos(th);
 c2(2,:)=r2*sin(th);
 
+c3(1,:)=r3*cos(th);
+c3(2,:)=r3*sin(th);
+
+% make 80 lines that cover c3
+l=ones(3,160);
+l(:,1)=[0;0;1];
+l(:,2)=[0;25;1];
+for i=3:2:159
+    l(:,i)=[0;0;1];
+    th=((i-1)/2)*pi/40;
+    R=[cos(th) sin(th) 0; -sin(th) cos(th) 0; 0 0 1];
+    l(:,i+1)=R*l(:,2);
+end
+
 % make four buttons
 but1=[-23 -13 -13 -23 -23;
-      -35 -35 -25 -25 -35;
+      -40 -40 -30 -30 -40;
         1   1   1   1   1];
 k=12;
 A=[1 0 k; 0 1 0; 0 0 1];
@@ -61,13 +68,17 @@ grid on;
 
 % draw the blades
 % keep the blade figures to update their coordinates later
-bf1=line(b1(1,:),b1(2,:), 'Color', 'black');
-bf2=line(b2(1,:),b2(2,:), 'Color', 'black');
-bf3=line(b3(1,:),b3(2,:), 'Color', 'black');
+bf1=patch(b1(1,:),b1(2,:), 'w');
+bf2=patch(b2(1,:),b2(2,:), 'w');
+bf3=patch(b3(1,:),b3(2,:), 'w');
 
 % draw the circles
 patch(c2(1,:),c2(2,:), 'w');
 patch(c1(1,:),c1(2,:), 'k');
+line(c3(1,:),c3(2,:), 'Color', 'black');
+
+% draw the lines
+line(l(1,:),l(2,:), 'Color', 'black');
 
 % draw the buttons
 patch(but1(1,:),but1(2,:), 'k', 'ButtonDownFcn', @(~,~) get_click(0));
@@ -76,13 +87,13 @@ patch(but3(1,:),but3(2,:), 'k', 'ButtonDownFcn', @(~,~) get_click(2));
 patch(but4(1,:),but4(2,:), 'k', 'ButtonDownFcn', @(~,~) get_click(3));
 
 % write the button texts
-text(but1(1,1)+4, but1(2,1)+5, '00', 'Color', 'white');
-text(but2(1,1)+4, but2(2,1)+5, '01', 'Color', 'white');
-text(but3(1,1)+4, but3(2,1)+5, '10', 'Color', 'white');
-text(but4(1,1)+4, but4(2,1)+5, '11', 'Color', 'white');
+text(but1(1,1)+4, but1(2,1)+5, '00', 'Color', 'white', 'PickableParts', 'none');
+text(but2(1,1)+4, but2(2,1)+5, '01', 'Color', 'white', 'PickableParts', 'none');
+text(but3(1,1)+4, but3(2,1)+5, '10', 'Color', 'white', 'PickableParts', 'none');
+text(but4(1,1)+4, but4(2,1)+5, '11', 'Color', 'white', 'PickableParts', 'none');
 
 % 축 제한 거는 건 그림 다 그리고 나서.
-axis([-40 40 -40 25]);
+axis([-40 40 -45 30]);
 
 global trig;
 trig=0;
@@ -98,7 +109,7 @@ while true
     t2=R*b2;
     t3=R*b3;
 
-    % update the blade figures' datas
+    % update the blade figure data
     set(bf1, 'XData', t1(1,:), 'YData', t1(2,:));
     set(bf2, 'XData', t2(1,:), 'YData', t2(2,:));
     set(bf3, 'XData', t3(1,:), 'YData', t3(2,:));
@@ -118,12 +129,8 @@ function s=update_s()
     s=3*trig;
 end
 
-% updates trig when mouse click occurs
+% update trig when a mouse click occurs
 function get_click(level)
     global trig;
     trig=level;
 end
-
-%% 현재 버그
-% - 버튼 위에 있는 텍스트 부분을 클릭하면 클릭이 안 먹는다. 서로 다른 객체여서 그런 듯.
-% - 텍스트에도 콜백을 등록해야 하나? 아니면 텍스트를 뚫고 버튼에 클릭이 들어가게 할 방법은 없나?
