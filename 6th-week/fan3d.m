@@ -30,20 +30,21 @@ c2(2,:)=r2*sin(th);
 c3(1,:)=r3*cos(th);
 c3(2,:)=r3*sin(th);
 
-% make 80 lines that cover c3
-% 26 dots on a line
-l=ones(3,4162);
-l(1,1:26)=0;
-l(2,1:26)=0:1:25;
-l(3,1:26)=fancover_curve(l(2,1:26));
+% make 80 curves that cover c3
+% 26 dots on a curve
+l=ones(3,4161);
+l(1,1:52)=0;
+l(2,1:26)=r2:0.84:25;
+% l(2,27:52)=0:1:25;
+l(2,27:52)=25:-0.84:r2;
+l(3,1:26)=fancover_curve(l(2,1:26), r2);
+l(3,27:52)=-l(3,1:26)+2;
 th=pi/40;
-for i=27:26:2054
+for i=53:52:4109
     R=[cos(th) sin(th) 0; -sin(th) cos(th) 0; 0 0 1];
-    l(:,i:i+25)=R*l(:,i-26:i-1);
+    l(:,i:i+51)=R*l(:,i-52:i-1);
 end
-l(:,2081)=[0,0,1];
-l(1:2,2082:4162)=l(1:2,1:2081);
-l(3,2082:4162)=-l(3,1:2081)+2;
+l(:,4161)=[0,r2,1];
 
 % make four buttons
 but1=[-23 -13 -13 -23 -23;
@@ -76,13 +77,13 @@ bf1=patch(b1(1,:),b1(2,:),b1(3,:), 'w');
 bf2=patch(b2(1,:),b2(2,:),b2(3,:), 'w');
 bf3=patch(b3(1,:),b3(2,:),b3(3,:), 'w');
 
+% draw the lines
+line(l(1,:),l(2,:),l(3,:), 'Color', 'black', 'LineWidth', 0.7);
+
 % draw the circles
 patch(c2(1,:),c2(2,:),c2(3,:), 'w');
 patch(c1(1,:),c1(2,:),c1(3,:), 'k');
 line(c3(1,:),c3(2,:),c3(3,:), 'Color', 'black', 'LineWidth', 1);
-
-% draw the lines
-line(l(1,:),l(2,:),l(3,:), 'Color', 'black', 'LineWidth', 0.7);
 
 % draw the buttons
 patch(but1(1,:),but1(2,:),but1(3,:), 'k', 'ButtonDownFcn', @(~,~) get_click(0));
@@ -144,8 +145,8 @@ function get_click(level)
     trig=level;
 end
 
-function z=fancover_curve(y)
-    z=3*sin((pi/25)*y)+1;
+function z=fancover_curve(y,r2)
+    z=3*sin((pi/(25-r2))*(y-r2))+1;
 end
 
 %% 현재 문제
@@ -158,4 +159,4 @@ end
 %  - 커버 z 중간값을 0으로 두면 된다.
 %  - 그럼 커버 아랫단이 날 아래를 지나간다. 해결.
 
-% - 지금 커버 끝이 너무 뾰족한 게 마음에 안 든다.
+% - 가운데 작은 원 둘이 선풍기날을 가려야 하는데 못 가리고 있다. 선풍기날을 patch로 바꾸면서 생긴 문제.
