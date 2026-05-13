@@ -133,8 +133,6 @@ orbitfig_jupiter=create_orbitfig(orbit_size, linecolor_jupiter);
 orbitfig_saturn=create_orbitfig(orbit_size, linecolor_saturn);
 orbitfig_uranus=create_orbitfig(orbit_size, linecolor_uranus);
 orbitfig_neptune=create_orbitfig(orbit_size, linecolor_neptune);
-% orbitfig_neptune=create_orbitfig(orbit_size, linecolor_neptune);
-
 
 for i=0:0.005:20
     [gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
@@ -244,7 +242,7 @@ function [Rev,Rot]=cal_trans_matrices(rot_phi,u,v,w,axis,centerRev)
     elseif strcmp(axis,'y')
         Rot=[cos(rot_phi) 0 sin(rot_phi) 0; 0 1 0 0; -sin(rot_phi) 0 cos(rot_phi) 0; 0 0 0 1];
     else
-        Rot=[cos(rot_phi) -sin(rot_phi) 0 0; sin(rot_phi) 0 cos(rot_phi) 0; 0 0 1 0; 0 0 0 1];
+        Rot=[cos(rot_phi) -sin(rot_phi) 0 0; sin(rot_phi) cos(rot_phi) 0 0; 0 0 1 0; 0 0 0 1];
     end
 end
 
