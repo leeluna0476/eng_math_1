@@ -124,7 +124,7 @@ orbitfig_uranus=create_orbitfig(orbit_size, linecolor_uranus);
 % orbitfig_neptune=create_orbitfig(orbit_size, linecolor_neptune);
 
 
-for i=0:0.005:5
+for i=0:0.005:20
     [rev_gal_phi,gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
     [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,20,0);
     [rev_earth_phi,ev,eu,ew]=cal_revolution(rev_earth,rev_earth_radius,i,20,0);
@@ -261,6 +261,11 @@ function orbit=update_orbit(orbit,revpoint)
     orbit(end,:)=revpoint;
 end
 
+% use patch instead of an array of line objects
+% the 'Faces' works as a set of lines, and is a matrix of raw datas
+% => can operate parallel processing on it using SIMD
+% however, an array of line objects does not contain raw datas
+% => cannot operate parallel processing ...
 function orbitfig=create_orbitfig(orbit_size, linc)
     orbitfig=patch('Vertices', zeros(orbit_size, 3), ...
                    'Faces', [(1:orbit_size-1)',(2:orbit_size)'], ...
