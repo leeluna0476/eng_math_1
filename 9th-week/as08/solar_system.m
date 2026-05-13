@@ -134,7 +134,7 @@ orbitfig_saturn=create_orbitfig(orbit_size, linecolor_saturn);
 orbitfig_uranus=create_orbitfig(orbit_size, linecolor_uranus);
 orbitfig_neptune=create_orbitfig(orbit_size, linecolor_neptune);
 
-for i=0:0.005:20
+for i=0:0.005:5
     [gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
     [su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,20,0);
     [eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,20,0);
@@ -267,7 +267,7 @@ function orbitfig=create_orbitfig(orbit_size, linc)
     orbitfig=patch('Vertices', zeros(orbit_size, 3), ...
                    'Faces', [(1:orbit_size-1)',(2:orbit_size)'], ...
                    'FaceVertexCData', linc, ...
-                   'EdgeColor', 'interp', ... 
+                   'EdgeColor', 'flat', ... 
                    'FaceColor', 'none', ...
                    'LineWidth', 0.5);
 end
@@ -284,5 +284,3 @@ function draw_orbit(orbitfig, orbit, linc)
                       'FaceVertexCData', active_colors);
     end
 end
-
-% 1 cycle마다 버벅거림이 심하다.
