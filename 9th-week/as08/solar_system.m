@@ -38,7 +38,6 @@ rot_earth=rev_earth*365;
 orbit_earth=zeros(orbit_size,3);
 line_earth=gobjects(1,orbit_size-1);
 linecolor_earth=[linspace(1,0,size(orbit_earth,1)); linspace(1,1,size(orbit_earth,1)); linspace(1,0,size(orbit_earth,1))]';
-% linecolor_earth='g';
 
 % mercury
 radius_mercury=radius_earth/2;
@@ -56,12 +55,22 @@ radius_venus=radius_earth/1.5;
 venus=radius_venus*[Xc; Yc; Zc; zeros(size(Xc))];
 venus(end,:)=venus(end,:)+1;
 rev_venus=rev_earth*1.62;
-rev_venus_radius=rev_earth_radius*0.7;
-rot_venus=rev_venus*3;
+rev_venus_radius=rev_earth_radius*0.723;
+rot_venus=rev_venus*0.92;
 orbit_venus=zeros(orbit_size,3);
 line_venus=gobjects(1,orbit_size-1);
 linecolor_venus=[linspace(1,1,size(orbit_earth,1)); linspace(1,1,size(orbit_earth,1)); linspace(1,0,size(orbit_earth,1))]';
 
+% mars
+radius_mars=radius_earth/1.2;
+mars=radius_mars*[Xc; Yc; Zc; zeros(size(Xc))];
+mars(end,:)=mars(end,:)+1;
+rev_mars=rev_earth*0.54;
+rev_mars_radius=rev_earth_radius*1.524;
+rot_mars=rev_mars*667;
+orbit_mars=zeros(orbit_size,3);
+line_mars=gobjects(1,orbit_size-1);
+linecolor_mars=[linspace(1,0,size(orbit_earth,1)); linspace(1,1,size(orbit_earth,1)); linspace(1,1,size(orbit_earth,1))]';
 
 axis_x=3500;
 axis_y=3500;
@@ -76,6 +85,7 @@ sunfig=surf(X,Y,Z);
 earthfig=surf(X,Y,Z);
 mercuryfig=surf(X,Y,Z);
 venusfig=surf(X,Y,Z);
+marsfig=surf(X,Y,Z);
 
 for i=1:orbit_size-1
     line_gal(i)=line([orbit_gal(i,1),orbit_gal(i+1,1)], ...
@@ -93,15 +103,18 @@ for i=1:orbit_size-1
     line_venus(i)=line([orbit_venus(i,1),orbit_venus(i+1,1)], ...
         [orbit_venus(i,2),orbit_venus(i+1,2)], ...
         [orbit_venus(i,3),orbit_venus(i+1,3)]);
-
+    line_mars(i)=line([orbit_mars(i,1),orbit_mars(i+1,1)], ...
+        [orbit_mars(i,2),orbit_mars(i+1,2)], ...
+        [orbit_mars(i,3),orbit_mars(i+1,3)]);
 end
 
-for i=0:0.005:5
-    [rev_gal_phi,gu,gv,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
+for i=0:0.005:20
+    [rev_gal_phi,gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
     [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,20,0);
     [rev_earth_phi,ev,eu,ew]=cal_revolution(rev_earth,rev_earth_radius,i,20,0);
     [rev_mercury_phi,mv,mu,mw]=cal_revolution(rev_mercury,rev_mercury_radius,i,20,0);
     [rev_venus_phi,vv,vu,vw]=cal_revolution(rev_venus,rev_venus_radius,i,20,0);
+    [rev_mars_phi,mrv,mru,mrw]=cal_revolution(rev_mars,rev_mars_radius,i,20,0);
 
     galRev=[1 0 0 gu; 0 1 0 gv; 0 0 1 gw; 0 0 0 1];
 
@@ -121,6 +134,10 @@ for i=0:0.005:5
     rot_venus_phi=rot_venus*2*pi*i/20;
     venusRev=sunRev*[1 0 0 vu; 0 1 0 vv; 0 0 1 vw; 0 0 0 1];
     venusRot=[1 0 0 0; 0 cos(rot_venus_phi) -sin(rot_venus_phi) 0; 0 sin(rot_venus_phi) cos(rot_venus_phi) 0; 0 0 0 1];
+
+    rot_mars_phi=rot_mars*2*pi*i/20;
+    marsRev=sunRev*[1 0 0 mru; 0 1 0 mrv; 0 0 1 mrw; 0 0 0 1];
+    marsRot=[1 0 0 0; 0 cos(rot_mars_phi) -sin(rot_mars_phi) 0; 0 sin(rot_mars_phi) cos(rot_mars_phi) 0; 0 0 0 1];
 
     nsun=sunRev*sunRot*sun;
     nsx=reshape(nsun(1,:),size(X));
@@ -142,31 +159,40 @@ for i=0:0.005:5
     nvy=reshape(nvenus(2,:),size(X));
     nvz=reshape(nvenus(3,:),size(X));
 
-    orbit_gal=update_orbit(orbit_gal,galRev(1:3,end)');
+    nmars=marsRev*marsRot*mars;
+    nmrx=reshape(nmars(1,:),size(X));
+    nmry=reshape(nmars(2,:),size(X));
+    nmrz=reshape(nmars(3,:),size(X));
+
+    % orbit_gal=update_orbit(orbit_gal,galRev(1:3,end)');
     orbit_sun=update_orbit(orbit_sun,sunRev(1:3,end)');
     orbit_earth=update_orbit(orbit_earth,earthRev(1:3,end)');
     orbit_mercury=update_orbit(orbit_mercury,mercuryRev(1:3,end)');
     orbit_venus=update_orbit(orbit_venus,venusRev(1:3,end)');
+    orbit_mars=update_orbit(orbit_mars,marsRev(1:3,end)');
 
     set(sunfig,'XData',nsx,'YData',nsy,'ZData',nsz);
     set(earthfig,'XData',nex,'YData',ney,'ZData',nez);
     set(mercuryfig,'XData',nmx,'YData',nmy,'ZData',nmz);
     set(venusfig,'XData',nvx,'YData',nvy,'ZData',nvz);
+    set(marsfig,'XData',nmrx,'YData',nmry,'ZData',nmrz);
 
     for j=1:orbit_size-1
+        % draw_orbit(line_gal, orbit_gal, j, linecolor_gal)
         draw_orbit(line_sun, orbit_sun, j, linecolor_sun)
         draw_orbit(line_earth, orbit_earth, j, linecolor_earth)
         draw_orbit(line_mercury, orbit_mercury, j, linecolor_mercury)
         draw_orbit(line_venus, orbit_venus, j, linecolor_venus)
+        draw_orbit(line_mars, orbit_mars, j, linecolor_mars)
     end
 
-    view([60, 60, 60]);
+    view(20, 30);
     grid on;
     xlabel('x');
     ylabel('y');
     zlabel('z');
     axis equal;
-    axis([-axis_x axis_x -axis_y axis_y -axis_z axis_z]);
+    % axis([-axis_x axis_x -axis_y axis_y -axis_z axis_z]);
     pause(0.0001);
 end
 
