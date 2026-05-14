@@ -110,15 +110,31 @@ axoffset=8350;
 figure(1);
 clf;
 hold on;
-sunfig=surf(X,Y,Z);
-earthfig=surf(X,Y,Z);
-mercuryfig=surf(X,Y,Z);
-venusfig=surf(X,Y,Z);
-marsfig=surf(X,Y,Z);
-jupiterfig=surf(X,Y,Z);
-saturnfig=surf(X,Y,Z);
-uranusfig=surf(X,Y,Z);
-neptunefig=surf(X,Y,Z);
+grid on;
+xlabel('x');
+ylabel('y');
+zlabel('z');
+axis equal;
+
+suntext=imread('sun.jpg');
+earthtext=imread('earth.jpeg');
+mercurytext=imread('mercury.jpeg');
+venustext=imread('venus.jpg');
+marstext=imread('mars.jpg');
+jupitertext=imread('jupiter.jpg');
+saturntext=imread('saturn.jpg');
+uranustext=imread('uranus.png');
+neptunetext=imread('neptune.jpg');
+
+sunfig=surf(X,Y,Z,'CData',suntext,'FaceColor','texturemap','Edgecolor','none');
+earthfig=surf(X,Y,Z,'CData',earthtext,'FaceColor','texturemap','Edgecolor','none');
+mercuryfig=surf(X,Y,Z,'CData',mercurytext,'FaceColor','texturemap','Edgecolor','none');
+venusfig=surf(X,Y,Z,'CData',venustext,'FaceColor','texturemap','Edgecolor','none');
+marsfig=surf(X,Y,Z,'CData',marstext,'FaceColor','texturemap','Edgecolor','none');
+jupiterfig=surf(X,Y,Z,'CData',jupitertext,'FaceColor','texturemap','Edgecolor','none');
+saturnfig=surf(X,Y,Z,'CData',saturntext,'FaceColor','texturemap','Edgecolor','none');
+uranusfig=surf(X,Y,Z,'CData',uranustext,'FaceColor','texturemap','Edgecolor','none');
+neptunefig=surf(X,Y,Z,'CData',neptunetext,'FaceColor','texturemap','Edgecolor','none');
 
 orbitfig_gal=create_orbitfig(orbit_size, linecolor_gal);
 orbitfig_sun=create_orbitfig(orbit_size, linecolor_sun);
@@ -131,17 +147,21 @@ orbitfig_saturn=create_orbitfig(orbit_size, linecolor_saturn);
 orbitfig_uranus=create_orbitfig(orbit_size, linecolor_uranus);
 orbitfig_neptune=create_orbitfig(orbit_size, linecolor_neptune);
 
+% v=VideoWriter('solar-system.mp4', 'MPEG-4');
+% v.FrameRate=30;
+% open(v);
+max_base=20;
 for i=0:0.005:5
     [~,gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
-    [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,20,0);
-    [~,eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,20,0);
-    [~,mu,mv,mw]=cal_revolution(rev_mercury,rev_mercury_radius,i,20,0);
-    [~,vu,vv,vw]=cal_revolution(rev_venus,rev_venus_radius,i,20,0);
-    [~,mru,mrv,mrw]=cal_revolution(rev_mars,rev_mars_radius,i,20,0);
-    [~,ju,jv,jw]=cal_revolution(rev_jupiter,rev_jupiter_radius,i,20,0);
-    [~,stu,stv,stw]=cal_revolution(rev_saturn,rev_saturn_radius,i,20,0);
-    [~,uu,uv,uw]=cal_revolution(rev_uranus,rev_uranus_radius,i,20,0);
-    [~,nu,nv,nw]=cal_revolution(rev_neptune,rev_neptune_radius,i,20,0);
+    [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,max_base,0);
+    [~,eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,max_base,0);
+    [~,mu,mv,mw]=cal_revolution(rev_mercury,rev_mercury_radius,i,max_base,0);
+    [~,vu,vv,vw]=cal_revolution(rev_venus,rev_venus_radius,i,max_base,0);
+    [~,mru,mrv,mrw]=cal_revolution(rev_mars,rev_mars_radius,i,max_base,0);
+    [~,ju,jv,jw]=cal_revolution(rev_jupiter,rev_jupiter_radius,i,max_base,0);
+    [~,stu,stv,stw]=cal_revolution(rev_saturn,rev_saturn_radius,i,max_base,0);
+    [~,uu,uv,uw]=cal_revolution(rev_uranus,rev_uranus_radius,i,max_base,0);
+    [~,nu,nv,nw]=cal_revolution(rev_neptune,rev_neptune_radius,i,max_base,0);
 
     galRev=[1 0 0 gu; 0 1 0 gv; 0 0 1 gw; 0 0 0 1];
 
@@ -214,20 +234,21 @@ for i=0:0.005:5
     draw_orbit(orbitfig_uranus, orbit_uranus)
     draw_orbit(orbitfig_neptune, orbit_neptune)
 
-    sun_deg=rev_sun_phi*180/pi;
-    view(50*cosd(sun_deg), 10*sind(sun_deg));
-    grid on;
-    xlabel('x');
-    ylabel('y');
-    zlabel('z');
-    axis equal;
+    % view(20,30)
+    view(50*cos(rev_sun_phi)-10, 10*sin(rev_sun_phi));
 
-    axis([orbit_sun(end,1)-axoffset orbit_sun(end,1)+axoffset ...
-          orbit_sun(end,2)-axoffset orbit_sun(end,2)+axoffset ...
-          orbit_sun(end,3)-axoffset orbit_sun(end,3)+axoffset]);
+    % axis([orbit_sun(end,1)-axoffset orbit_sun(end,1)+axoffset ...
+    %       orbit_sun(end,2)-axoffset orbit_sun(end,2)+axoffset ...
+    %       orbit_sun(end,3)-axoffset orbit_sun(end,3)+axoffset]);
 
     pause(0.001);
+    % drawnow limitrate
+
+    % frame = getframe(gcf);
+    % writeVideo(v, frame);
 end
+
+% close(v);
 
 function [phi, u,v,w]=cal_revolution(rev_no,rev_radius,sway_base,sway_base_max,sway_scale)
     phi=rev_no*2*pi*sway_base/sway_base_max;
