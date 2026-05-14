@@ -10,7 +10,7 @@ orbit_size=320;
 % galaxy
 rev_gal=1;
 rev_gal_radius=5000;
-orbit_gal=zeros(orbit_size,3);
+orbit_gal=nan(orbit_size,3);
 linecolor_gal=[linspace(1,1,orbit_size); linspace(1,0,orbit_size); linspace(1,0,orbit_size)]';
 gal_sway_scale=50;
 
@@ -21,7 +21,7 @@ sun(end,:)=sun(end,:)+1;
 rev_sun=rev_gal*5;
 rev_sun_radius=rev_gal_radius/2;
 rot_sun=rev_sun*20;
-orbit_sun=zeros(orbit_size,3);
+orbit_sun=nan(orbit_size,3);
 linecolor_sun=[linspace(1,0,orbit_size); linspace(1,0,orbit_size); linspace(1,0,orbit_size)]';
 
 % earth
@@ -31,7 +31,7 @@ earth(end,:)=earth(end,:)+1;
 rev_earth=rev_sun*16;
 rev_earth_radius=radius_sun+1000;
 rot_earth=rev_earth*365;
-orbit_earth=zeros(orbit_size,3);
+orbit_earth=nan(orbit_size,3);
 linecolor_earth=[linspace(1,0,orbit_size); linspace(1,1,orbit_size); linspace(1,0,orbit_size)]';
 
 % mercury
@@ -41,7 +41,7 @@ mercury(end,:)=mercury(end,:)+1;
 rev_mercury=rev_earth*4.15;
 rev_mercury_radius=rev_earth_radius*0.4;
 rot_mercury=rev_mercury*3;
-orbit_mercury=zeros(orbit_size,3);
+orbit_mercury=nan(orbit_size,3);
 linecolor_mercury=[linspace(1,1,orbit_size); linspace(1,1,orbit_size); linspace(1,0,orbit_size)]';
 
 % venus
@@ -51,7 +51,7 @@ venus(end,:)=venus(end,:)+1;
 rev_venus=rev_earth*1.62;
 rev_venus_radius=rev_earth_radius*0.723;
 rot_venus=rev_venus*0.92;
-orbit_venus=zeros(orbit_size,3);
+orbit_venus=nan(orbit_size,3);
 linecolor_venus=[linspace(1,1,orbit_size); linspace(1,0,orbit_size); linspace(1,0,orbit_size)]';
 
 % mars
@@ -61,7 +61,7 @@ mars(end,:)=mars(end,:)+1;
 rev_mars=rev_earth*0.54;
 rev_mars_radius=rev_earth_radius*1.524;
 rot_mars=rev_mars*667;
-orbit_mars=zeros(orbit_size,3);
+orbit_mars=nan(orbit_size,3);
 linecolor_mars=[linspace(1,0,orbit_size); linspace(1,1,orbit_size); linspace(1,1,orbit_size)]';
 
 % jupiter
@@ -71,27 +71,27 @@ jupiter(end,:)=jupiter(end,:)+1;
 rev_jupiter=rev_earth*0.45;
 rev_jupiter_radius=rev_earth_radius*3;
 rot_jupiter=rev_jupiter*1000;
-orbit_jupiter=zeros(orbit_size,3);
+orbit_jupiter=nan(orbit_size,3);
 linecolor_jupiter=[linspace(1,1,orbit_size); linspace(1,0,orbit_size); linspace(1,1,orbit_size)]';
 
 % saturn
 radius_saturn=radius_earth*1.7;
 saturn=radius_saturn*[Xc; Yc; Zc; zeros(size(Xc))];
 saturn(end,:)=saturn(end,:)+1;
-rev_saturn=rev_earth*0.35;
+rev_saturn=rev_earth*0.33;
 rev_saturn_radius=rev_earth_radius*3.5;
 rot_saturn=rev_saturn*2410;
-orbit_saturn=zeros(orbit_size,3);
+orbit_saturn=nan(orbit_size,3);
 linecolor_saturn=[linspace(1,0,orbit_size); linspace(1,0,orbit_size); linspace(1,1,orbit_size)]';
 
 % uranus
 radius_uranus=radius_earth*1.3;
 uranus=radius_uranus*[Xc; Yc; Zc; zeros(size(Xc))];
 uranus(end,:)=uranus(end,:)+1;
-rev_uranus=rev_earth*0.25;
+rev_uranus=rev_earth*0.22;
 rev_uranus_radius=rev_earth_radius*4.5;
 rot_uranus=rev_uranus*4280;
-orbit_uranus=zeros(orbit_size,3);
+orbit_uranus=nan(orbit_size,3);
 linecolor_uranus=[linspace(1,0.1,orbit_size); linspace(1,0.8,orbit_size); linspace(1,0.5,orbit_size)]';
 
 % neptune
@@ -101,7 +101,7 @@ neptune(end,:)=neptune(end,:)+1;
 rev_neptune=rev_earth*0.15;
 rev_neptune_radius=rev_earth_radius*5.5;
 rot_neptune=rev_neptune*8970;
-orbit_neptune=zeros(orbit_size,3);
+orbit_neptune=nan(orbit_size,3);
 linecolor_neptune=[linspace(1,0.1,orbit_size); linspace(1,0.5,orbit_size); linspace(1,0.8,orbit_size)]';
 
 axis_x=10000;
@@ -206,16 +206,16 @@ for i=0:0.005:5
     set(uranusfig,'XData',nux,'YData',nuy,'ZData',nuz);
     set(neptunefig,'XData',nnx,'YData',nny,'ZData',nnz);
 
-    % draw_orbit(orbitfig_gal, orbit_gal, linecolor_gal)
-    draw_orbit(orbitfig_sun, orbit_sun, linecolor_sun)
-    draw_orbit(orbitfig_earth, orbit_earth, linecolor_earth)
-    draw_orbit(orbitfig_mercury, orbit_mercury, linecolor_mercury)
-    draw_orbit(orbitfig_venus, orbit_venus, linecolor_venus)
-    draw_orbit(orbitfig_mars, orbit_mars, linecolor_mars)
-    draw_orbit(orbitfig_jupiter, orbit_jupiter, linecolor_jupiter)
-    draw_orbit(orbitfig_saturn, orbit_saturn, linecolor_saturn)
-    draw_orbit(orbitfig_uranus, orbit_uranus, linecolor_uranus)
-    draw_orbit(orbitfig_neptune, orbit_neptune, linecolor_neptune)
+    % draw_orbit(orbitfig_gal, orbit_gal)
+    draw_orbit(orbitfig_sun, orbit_sun)
+    draw_orbit(orbitfig_earth, orbit_earth)
+    draw_orbit(orbitfig_mercury, orbit_mercury)
+    draw_orbit(orbitfig_venus, orbit_venus)
+    draw_orbit(orbitfig_mars, orbit_mars)
+    draw_orbit(orbitfig_jupiter, orbit_jupiter)
+    draw_orbit(orbitfig_saturn, orbit_saturn)
+    draw_orbit(orbitfig_uranus, orbit_uranus)
+    draw_orbit(orbitfig_neptune, orbit_neptune)
 
     view(20, 30);
     grid on;
@@ -224,7 +224,7 @@ for i=0:0.005:5
     zlabel('z');
     axis equal;
     % axis([-axis_x axis_x -axis_y axis_y -axis_z axis_z]);
-    pause(0.0001);
+    pause(0.001);
 end
 
 function [u,v,w]=cal_revolution(rev_no,rev_radius,sway_base,sway_base_max,sway_scale)
@@ -264,23 +264,16 @@ end
 % however, an array of line objects does not contain raw datas
 % => cannot operate parallel processing ...
 function orbitfig=create_orbitfig(orbit_size, linc)
-    orbitfig=patch('Vertices', zeros(orbit_size, 3), ...
-                   'Faces', [(1:orbit_size-1)',(2:orbit_size)'], ...
-                   'FaceVertexCData', linc, ...
+    vertices=nan(orbit_size+1,3);
+    orbitfig=patch('Vertices', vertices, ...
+                   'Faces', 1:orbit_size+1, ...
+                   'FaceVertexCData', [linc; ones(1,3)], ...
                    'EdgeColor', 'flat', ... 
                    'FaceColor', 'none', ...
                    'LineWidth', 0.5);
 end
 
-function draw_orbit(orbitfig, orbit, linc)
-    mask=orbit==0;
-    active_orbit=orbit(~all(mask,2),:);
-    sz=size(active_orbit);
-
-    if sz(1) > 1
-        active_colors=linc(~all(mask,2),:);
-        set(orbitfig, 'Vertices', active_orbit, ...
-                      'Faces', [(1:sz(1)-1)',(2:sz(1))'], ...
-                      'FaceVertexCData', active_colors);
-    end
+function draw_orbit(orbitfig, orbit)
+    vertices=[orbit;nan(1,3)];
+    set(orbitfig, 'Vertices', vertices);
 end
