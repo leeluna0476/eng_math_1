@@ -104,10 +104,7 @@ rot_neptune=rev_neptune*8970;
 orbit_neptune=nan(orbit_size,3);
 linecolor_neptune=[linspace(1,0.1,orbit_size); linspace(1,0.5,orbit_size); linspace(1,0.8,orbit_size)]';
 
-axis_x=10000;
-axis_y=10000;
-axis_z=10000;
-prev_G=zeros(0,0);
+axoffset=8350;
 
 % figures
 figure(1);
@@ -135,16 +132,16 @@ orbitfig_uranus=create_orbitfig(orbit_size, linecolor_uranus);
 orbitfig_neptune=create_orbitfig(orbit_size, linecolor_neptune);
 
 for i=0:0.005:5
-    [gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
-    [su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,20,0);
-    [eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,20,0);
-    [mu,mv,mw]=cal_revolution(rev_mercury,rev_mercury_radius,i,20,0);
-    [vu,vv,vw]=cal_revolution(rev_venus,rev_venus_radius,i,20,0);
-    [mru,mrv,mrw]=cal_revolution(rev_mars,rev_mars_radius,i,20,0);
-    [ju,jv,jw]=cal_revolution(rev_jupiter,rev_jupiter_radius,i,20,0);
-    [stu,stv,stw]=cal_revolution(rev_saturn,rev_saturn_radius,i,20,0);
-    [uu,uv,uw]=cal_revolution(rev_uranus,rev_uranus_radius,i,20,0);
-    [nu,nv,nw]=cal_revolution(rev_neptune,rev_neptune_radius,i,20,0);
+    [~,gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
+    [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,20,0);
+    [~,eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,20,0);
+    [~,mu,mv,mw]=cal_revolution(rev_mercury,rev_mercury_radius,i,20,0);
+    [~,vu,vv,vw]=cal_revolution(rev_venus,rev_venus_radius,i,20,0);
+    [~,mru,mrv,mrw]=cal_revolution(rev_mars,rev_mars_radius,i,20,0);
+    [~,ju,jv,jw]=cal_revolution(rev_jupiter,rev_jupiter_radius,i,20,0);
+    [~,stu,stv,stw]=cal_revolution(rev_saturn,rev_saturn_radius,i,20,0);
+    [~,uu,uv,uw]=cal_revolution(rev_uranus,rev_uranus_radius,i,20,0);
+    [~,nu,nv,nw]=cal_revolution(rev_neptune,rev_neptune_radius,i,20,0);
 
     galRev=[1 0 0 gu; 0 1 0 gv; 0 0 1 gw; 0 0 0 1];
 
@@ -217,17 +214,22 @@ for i=0:0.005:5
     draw_orbit(orbitfig_uranus, orbit_uranus)
     draw_orbit(orbitfig_neptune, orbit_neptune)
 
-    view(20, 30);
+    sun_deg=rev_sun_phi*180/pi;
+    view(50*cosd(sun_deg), 10*sind(sun_deg));
     grid on;
     xlabel('x');
     ylabel('y');
     zlabel('z');
     axis equal;
-    % axis([-axis_x axis_x -axis_y axis_y -axis_z axis_z]);
+
+    axis([orbit_sun(end,1)-axoffset orbit_sun(end,1)+axoffset ...
+          orbit_sun(end,2)-axoffset orbit_sun(end,2)+axoffset ...
+          orbit_sun(end,3)-axoffset orbit_sun(end,3)+axoffset]);
+
     pause(0.001);
 end
 
-function [u,v,w]=cal_revolution(rev_no,rev_radius,sway_base,sway_base_max,sway_scale)
+function [phi, u,v,w]=cal_revolution(rev_no,rev_radius,sway_base,sway_base_max,sway_scale)
     phi=rev_no*2*pi*sway_base/sway_base_max;
     u=rev_radius*cos(phi);
     v=sway_scale*sway_base;
