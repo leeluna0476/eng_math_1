@@ -165,6 +165,7 @@ max_base=20;
 elrise=0;
 azrise=0;
 vgain=15000;
+zoom_freq_scale=2;
 for i=0:0.005:5
     [~,gu,gv,gw]=cal_revolution(rev_gal,rev_gal_radius,i,max_base,gal_sway_scale);
     [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,max_base,0);
@@ -217,7 +218,7 @@ for i=0:0.005:5
     orbit_uranus=update_orbit(orbit_uranus,uranusRev(1:3,end)');
     orbit_neptune=update_orbit(orbit_neptune,neptuneRev(1:3,end)');
 
-    vr=7200 + 7000*sin(rev_sun_phi);
+    vr=7200 + 7000*sin(zoom_freq_scale*rev_sun_phi);
     az=50*cos(rev_sun_phi)-10;
     el=10*sin(rev_sun_phi);
     viewpoint=[vr*cosd(el)*sind(az),-vr*cosd(el)*cosd(az),vr*sind(el)];
