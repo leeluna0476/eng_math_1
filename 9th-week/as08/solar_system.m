@@ -104,8 +104,6 @@ rot_neptune=rev_neptune*8970;
 orbit_neptune=nan(orbit_size,3);
 linecolor_neptune=[linspace(1,0.1,orbit_size); linspace(1,0.5,orbit_size); linspace(1,0.8,orbit_size)]';
 
-axoffset=8350;
-
 % figures
 figure(1);
 clf;
@@ -125,16 +123,28 @@ jupitertext=imread('jupiter.jpg');
 saturntext=imread('saturn.jpg');
 uranustext=imread('uranus.png');
 neptunetext=imread('neptune.jpg');
+background=imread('background.jpg');
 
-sunfig=surf(X,Y,Z,'CData',suntext,'FaceColor','texturemap','Edgecolor','none');
-earthfig=surf(X,Y,Z,'CData',earthtext,'FaceColor','texturemap','Edgecolor','none');
-mercuryfig=surf(X,Y,Z,'CData',mercurytext,'FaceColor','texturemap','Edgecolor','none');
-venusfig=surf(X,Y,Z,'CData',venustext,'FaceColor','texturemap','Edgecolor','none');
-marsfig=surf(X,Y,Z,'CData',marstext,'FaceColor','texturemap','Edgecolor','none');
-jupiterfig=surf(X,Y,Z,'CData',jupitertext,'FaceColor','texturemap','Edgecolor','none');
-saturnfig=surf(X,Y,Z,'CData',saturntext,'FaceColor','texturemap','Edgecolor','none');
-uranusfig=surf(X,Y,Z,'CData',uranustext,'FaceColor','texturemap','Edgecolor','none');
-neptunefig=surf(X,Y,Z,'CData',neptunetext,'FaceColor','texturemap','Edgecolor','none');
+axoffset=8350;
+fx=nan(1,10);
+fy=nan(1,10);
+[fX,fY]=meshgrid(fx,fy);
+fZ=nan(size(fX));
+floorfig=surf(fX,fY,fZ,'CData',background,'FaceColor','texturemap','EdgeColor','none');
+ceilfig=surf(fX,fY,fZ,'CData',background,'FaceColor','texturemap','EdgeColor','none');
+wallfig1=surf(fX,fY,fZ,'CData',background,'FaceColor','texturemap','EdgeColor','none');
+wallfig2=surf(fX,fY,fZ,'CData',background,'FaceColor','texturemap','EdgeColor','none');
+wallfig3=surf(fX,fY,fZ,'CData',background,'FaceColor','texturemap','EdgeColor','none');
+
+sunfig=surf(X,Y,Z,'CData',suntext,'FaceColor','texturemap','EdgeColor','none');
+earthfig=surf(X,Y,Z,'CData',earthtext,'FaceColor','texturemap','EdgeColor','none');
+mercuryfig=surf(X,Y,Z,'CData',mercurytext,'FaceColor','texturemap','EdgeColor','none');
+venusfig=surf(X,Y,Z,'CData',venustext,'FaceColor','texturemap','EdgeColor','none');
+marsfig=surf(X,Y,Z,'CData',marstext,'FaceColor','texturemap','EdgeColor','none');
+jupiterfig=surf(X,Y,Z,'CData',jupitertext,'FaceColor','texturemap','EdgeColor','none');
+saturnfig=surf(X,Y,Z,'CData',saturntext,'FaceColor','texturemap','EdgeColor','none');
+uranusfig=surf(X,Y,Z,'CData',uranustext,'FaceColor','texturemap','EdgeColor','none');
+neptunefig=surf(X,Y,Z,'CData',neptunetext,'FaceColor','texturemap','EdgeColor','none');
 
 orbitfig_gal=create_orbitfig(orbit_size, linecolor_gal);
 orbitfig_sun=create_orbitfig(orbit_size, linecolor_sun);
@@ -150,11 +160,15 @@ orbitfig_neptune=create_orbitfig(orbit_size, linecolor_neptune);
 % v=VideoWriter('solar-system.mp4', 'MPEG-4');
 % v.FrameRate=30;
 % open(v);
+vr=2*rev_sun_radius;
 max_base=20;
+elrise=0;
+azrise=0;
+vgain=15000;
 for i=0:0.005:5
     [~,gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
     [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,max_base,0);
-    [~,eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,max_base,0);
+    [rev_earth_phi,eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,max_base,0);
     [~,mu,mv,mw]=cal_revolution(rev_mercury,rev_mercury_radius,i,max_base,0);
     [~,vu,vv,vw]=cal_revolution(rev_venus,rev_venus_radius,i,max_base,0);
     [~,mru,mrv,mrw]=cal_revolution(rev_mars,rev_mars_radius,i,max_base,0);
@@ -192,17 +206,7 @@ for i=0:0.005:5
     rot_neptune_phi=rot_neptune*2*pi*i/20;
     [neptuneRev,neptuneRot]=cal_trans_matrices(rot_neptune_phi,nv,nu,nw,'x',sunRev);
 
-    [nsx,nsy,nsz]=transformed_data(sunRev,sunRot,sun,size(X));
-    [nex,ney,nez]=transformed_data(earthRev,earthRot,earth,size(X));
-    [nmx,nmy,nmz]=transformed_data(mercuryRev,mercuryRot,mercury,size(X));
-    [nvx,nvy,nvz]=transformed_data(venusRev,venusRot,venus,size(X));
-    [nmrx,nmry,nmrz]=transformed_data(marsRev,marsRot,mars,size(X));
-    [njx,njy,njz]=transformed_data(jupiterRev,jupiterRot,jupiter,size(X));
-    [nstx,nsty,nstz]=transformed_data(saturnRev,saturnRot,saturn,size(X));
-    [nux,nuy,nuz]=transformed_data(uranusRev,uranusRot,uranus,size(X));
-    [nnx,nny,nnz]=transformed_data(neptuneRev,neptuneRot,neptune,size(X));
-
-    orbit_gal=update_orbit(orbit_gal,galRev(1:3,end)');
+    % orbit_gal=update_orbit(orbit_gal,galRev(1:3,end)');
     orbit_sun=update_orbit(orbit_sun,sunRev(1:3,end)');
     orbit_earth=update_orbit(orbit_earth,earthRev(1:3,end)');
     orbit_mercury=update_orbit(orbit_mercury,mercuryRev(1:3,end)');
@@ -212,6 +216,26 @@ for i=0:0.005:5
     orbit_saturn=update_orbit(orbit_saturn,saturnRev(1:3,end)');
     orbit_uranus=update_orbit(orbit_uranus,uranusRev(1:3,end)');
     orbit_neptune=update_orbit(orbit_neptune,neptuneRev(1:3,end)');
+
+    vr=7500 + 7000*sin(rev_sun_phi);
+    % view(20,30)
+    az=50*cos(rev_sun_phi)-10;
+    el=10*sin(rev_sun_phi);
+    viewpoint=[vr*cosd(el)*sind(az),-vr*cosd(el)*cosd(az),vr*sind(el)];
+    view(viewpoint);
+
+    sundist=norm(viewpoint'-sunRev(1:3,end));
+    scale=vgain/sundist;
+
+    [nsx,nsy,nsz]=transformed_data(sunRev,sunRot,scale*sun,size(X));
+    [nex,ney,nez]=transformed_data(earthRev,earthRot,scale*earth,size(X));
+    [nmx,nmy,nmz]=transformed_data(mercuryRev,mercuryRot,scale*mercury,size(X));
+    [nvx,nvy,nvz]=transformed_data(venusRev,venusRot,scale*venus,size(X));
+    [nmrx,nmry,nmrz]=transformed_data(marsRev,marsRot,scale*mars,size(X));
+    [njx,njy,njz]=transformed_data(jupiterRev,jupiterRot,scale*jupiter,size(X));
+    [nstx,nsty,nstz]=transformed_data(saturnRev,saturnRot,scale*saturn,size(X));
+    [nux,nuy,nuz]=transformed_data(uranusRev,uranusRot,scale*uranus,size(X));
+    [nnx,nny,nnz]=transformed_data(neptuneRev,neptuneRot,scale*neptune,size(X));
 
     set(sunfig,'XData',nsx,'YData',nsy,'ZData',nsz);
     set(earthfig,'XData',nex,'YData',ney,'ZData',nez);
@@ -223,23 +247,62 @@ for i=0:0.005:5
     set(uranusfig,'XData',nux,'YData',nuy,'ZData',nuz);
     set(neptunefig,'XData',nnx,'YData',nny,'ZData',nnz);
 
-    % draw_orbit(orbitfig_gal, orbit_gal)
-    draw_orbit(orbitfig_sun, orbit_sun)
-    draw_orbit(orbitfig_earth, orbit_earth)
-    draw_orbit(orbitfig_mercury, orbit_mercury)
-    draw_orbit(orbitfig_venus, orbit_venus)
-    draw_orbit(orbitfig_mars, orbit_mars)
-    draw_orbit(orbitfig_jupiter, orbit_jupiter)
-    draw_orbit(orbitfig_saturn, orbit_saturn)
-    draw_orbit(orbitfig_uranus, orbit_uranus)
-    draw_orbit(orbitfig_neptune, orbit_neptune)
+    % draw_orbit(orbitfig_gal, scale*orbit_gal)
+    draw_orbit(orbitfig_sun, scale*orbit_sun);
+    draw_orbit(orbitfig_earth, scale*orbit_earth);
+    draw_orbit(orbitfig_mercury, scale*orbit_mercury);
+    draw_orbit(orbitfig_venus, scale*orbit_venus);
+    draw_orbit(orbitfig_mars, scale*orbit_mars);
+    draw_orbit(orbitfig_jupiter, scale*orbit_jupiter);
+    draw_orbit(orbitfig_saturn, scale*orbit_saturn);
+    draw_orbit(orbitfig_uranus, scale*orbit_uranus);
+    draw_orbit(orbitfig_neptune, scale*orbit_neptune);
 
-    % view(20,30)
-    view(50*cos(rev_sun_phi)-10, 10*sin(rev_sun_phi));
 
-    % axis([orbit_sun(end,1)-axoffset orbit_sun(end,1)+axoffset ...
-    %       orbit_sun(end,2)-axoffset orbit_sun(end,2)+axoffset ...
-    %       orbit_sun(end,3)-axoffset orbit_sun(end,3)+axoffset]);
+    axis([scale*orbit_sun(end,1)-axoffset scale*orbit_sun(end,1)+axoffset ...
+          scale*orbit_sun(end,2)-axoffset scale*orbit_sun(end,2)+axoffset ...
+          scale*orbit_sun(end,3)-axoffset scale*orbit_sun(end,3)+axoffset]);
+
+    % x=linspace(orbit_sun(end,1)-axoffset,orbit_sun(end,1)+axoffset, 10);
+    % y=linspace(orbit_sun(end,2)-axoffset,orbit_sun(end,2)+axoffset, 10);
+    % z=linspace(orbit_sun(end,3)-axoffset,orbit_sun(end,3)+axoffset, 10);
+    % [nX1,nY1]=meshgrid(x,y);
+    % if el>=0
+    %     nZ1=ones(size(nX1))*(orbit_sun(end,3)-axoffset);
+    %     set(floorfig,'XData',nX1,'YData',nY1,'ZData',nZ1);
+    %     if elrise==0
+    %         elrise=1;
+    %         set(ceilfig,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)))
+    %     end
+    % else
+    %     nZ1=ones(size(nX1))*(orbit_sun(end,3)+axoffset);
+    %     set(ceilfig,'XData',nX1,'YData',nY1,'ZData',nZ1);
+    %     if elrise==1
+    %         elrise=0;
+    %         set(floorfig,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)))
+    %     end
+    % end
+    % 
+    % [nX2,nZ2]=meshgrid(x,z);
+    % nY2=ones(size(nX1))*(orbit_sun(end,2)+axoffset);
+    % set(wallfig1,'XData',nX2,'YData',nY2,'ZData',nZ2);
+    % 
+    % [nY3,nZ3]=meshgrid(y,z);
+    % if az>=0
+    %     nX3=ones(size(nX1))*(orbit_sun(end,1)-axoffset);
+    %     set(wallfig2,'XData',nX3,'YData',nY3,'ZData',nZ3);
+    %     if azrise==0
+    %         azrise=1;
+    %         set(wallfig3,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)));
+    %     end
+    % else
+    %     nX3=ones(size(nX1))*(orbit_sun(end,1)+axoffset);
+    %     set(wallfig2,'XData',nX3,'YData',nY3,'ZData',nZ3);
+    %     if azrise==1
+    %         azrise=0;
+    %         set(wallfig2,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)));
+    %     end
+    % end
 
     pause(0.001);
     % drawnow limitrate
@@ -300,3 +363,11 @@ function draw_orbit(orbitfig, orbit)
     vertices=[orbit;nan(1,3)];
     set(orbitfig, 'Vertices', vertices);
 end
+
+function [nx,ny,nz]=scale_mesh(x,y,z,scale,vgain)
+    nx=x./scale.*vgain;
+    ny=y./scale.*vgain;
+    nz=z./scale.*vgain;
+end
+
+% 모든 radius (planet radius, orbital radius)에 scale factor를 곱한다.
