@@ -166,9 +166,9 @@ elrise=0;
 azrise=0;
 vgain=15000;
 for i=0:0.005:5
-    [~,gv,gu,gw]=cal_revolution(rev_gal,rev_gal_radius,i,20,gal_sway_scale);
+    [~,gu,gv,gw]=cal_revolution(rev_gal,rev_gal_radius,i,max_base,gal_sway_scale);
     [rev_sun_phi,su,sv,sw]=cal_revolution(rev_sun,rev_sun_radius,i,max_base,0);
-    [rev_earth_phi,eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,max_base,0);
+    [rev_earth_th,eu,ev,ew]=cal_revolution(rev_earth,rev_earth_radius,i,max_base,0);
     [~,mu,mv,mw]=cal_revolution(rev_mercury,rev_mercury_radius,i,max_base,0);
     [~,vu,vv,vw]=cal_revolution(rev_venus,rev_venus_radius,i,max_base,0);
     [~,mru,mrv,mrw]=cal_revolution(rev_mars,rev_mars_radius,i,max_base,0);
@@ -177,33 +177,33 @@ for i=0:0.005:5
     [~,uu,uv,uw]=cal_revolution(rev_uranus,rev_uranus_radius,i,max_base,0);
     [~,nu,nv,nw]=cal_revolution(rev_neptune,rev_neptune_radius,i,max_base,0);
 
-    galRev=[1 0 0 gu; 0 1 0 gv; 0 0 1 gw; 0 0 0 1];
+    galRev=[1 0 0 gv; 0 1 0 gu; 0 0 1 gw; 0 0 0 1];
 
-    rot_sun_phi=rot_sun*2*pi*i/20;
+    rot_sun_phi=rot_sun*2*pi*i/max_base;
     [sunRev,sunRot]=cal_trans_matrices(rot_sun_phi,su,sv,sw,'y',galRev);
     
-    rot_earth_phi=rot_earth*2*pi*i/20;
+    rot_earth_phi=rot_earth*2*pi*i/max_base;
     [earthRev,earthRot]=cal_trans_matrices(rot_earth_phi,ev,eu,ew,'x',sunRev);
 
-    rot_mercury_phi=rot_mercury*2*pi*i/20;
+    rot_mercury_phi=rot_mercury*2*pi*i/max_base;
     [mercuryRev,mercuryRot]=cal_trans_matrices(rot_mercury_phi,mv,mu,mw,'x',sunRev);
 
-    rot_venus_phi=rot_venus*2*pi*i/20;
+    rot_venus_phi=rot_venus*2*pi*i/max_base;
     [venusRev,venusRot]=cal_trans_matrices(rot_venus_phi,vv,vu,vw,'x',sunRev);
 
-    rot_mars_phi=rot_mars*2*pi*i/20;
+    rot_mars_phi=rot_mars*2*pi*i/max_base;
     [marsRev,marsRot]=cal_trans_matrices(rot_mars_phi,mrv,mru,mrw,'x',sunRev);
 
-    rot_jupiter_phi=rot_jupiter*2*pi*i/20;
+    rot_jupiter_phi=rot_jupiter*2*pi*i/max_base;
     [jupiterRev,jupiterRot]=cal_trans_matrices(rot_jupiter_phi,jv,ju,jw,'x',sunRev);
 
-    rot_saturn_phi=rot_saturn*2*pi*i/20;
+    rot_saturn_phi=rot_saturn*2*pi*i/max_base;
     [saturnRev,saturnRot]=cal_trans_matrices(rot_saturn_phi,stv,stu,stw,'x',sunRev);
 
-    rot_uranus_phi=rot_uranus*2*pi*i/20;
+    rot_uranus_phi=rot_uranus*2*pi*i/max_base;
     [uranusRev,uranusRot]=cal_trans_matrices(rot_uranus_phi,uv,uu,uw,'x',sunRev);
 
-    rot_neptune_phi=rot_neptune*2*pi*i/20;
+    rot_neptune_phi=rot_neptune*2*pi*i/max_base;
     [neptuneRev,neptuneRot]=cal_trans_matrices(rot_neptune_phi,nv,nu,nw,'x',sunRev);
 
     % orbit_gal=update_orbit(orbit_gal,galRev(1:3,end)');
@@ -217,15 +217,14 @@ for i=0:0.005:5
     orbit_uranus=update_orbit(orbit_uranus,uranusRev(1:3,end)');
     orbit_neptune=update_orbit(orbit_neptune,neptuneRev(1:3,end)');
 
-    vr=7500 + 7000*sin(rev_sun_phi);
-    % view(20,30)
+    vr=7200 + 7000*sin(rev_sun_phi);
     az=50*cos(rev_sun_phi)-10;
     el=10*sin(rev_sun_phi);
     viewpoint=[vr*cosd(el)*sind(az),-vr*cosd(el)*cosd(az),vr*sind(el)];
     view(viewpoint);
 
-    sundist=norm(viewpoint'-sunRev(1:3,end));
-    scale=vgain/sundist;
+    dist=norm(viewpoint'-sunRev(1:3,end));
+    scale=vgain/dist; % 물체 크기: dist에 반비례.
 
     [nsx,nsy,nsz]=transformed_data(sunRev,sunRot,scale*sun,size(X));
     [nex,ney,nez]=transformed_data(earthRev,earthRot,scale*earth,size(X));
@@ -262,47 +261,6 @@ for i=0:0.005:5
     axis([scale*orbit_sun(end,1)-axoffset scale*orbit_sun(end,1)+axoffset ...
           scale*orbit_sun(end,2)-axoffset scale*orbit_sun(end,2)+axoffset ...
           scale*orbit_sun(end,3)-axoffset scale*orbit_sun(end,3)+axoffset]);
-
-    % x=linspace(orbit_sun(end,1)-axoffset,orbit_sun(end,1)+axoffset, 10);
-    % y=linspace(orbit_sun(end,2)-axoffset,orbit_sun(end,2)+axoffset, 10);
-    % z=linspace(orbit_sun(end,3)-axoffset,orbit_sun(end,3)+axoffset, 10);
-    % [nX1,nY1]=meshgrid(x,y);
-    % if el>=0
-    %     nZ1=ones(size(nX1))*(orbit_sun(end,3)-axoffset);
-    %     set(floorfig,'XData',nX1,'YData',nY1,'ZData',nZ1);
-    %     if elrise==0
-    %         elrise=1;
-    %         set(ceilfig,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)))
-    %     end
-    % else
-    %     nZ1=ones(size(nX1))*(orbit_sun(end,3)+axoffset);
-    %     set(ceilfig,'XData',nX1,'YData',nY1,'ZData',nZ1);
-    %     if elrise==1
-    %         elrise=0;
-    %         set(floorfig,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)))
-    %     end
-    % end
-    % 
-    % [nX2,nZ2]=meshgrid(x,z);
-    % nY2=ones(size(nX1))*(orbit_sun(end,2)+axoffset);
-    % set(wallfig1,'XData',nX2,'YData',nY2,'ZData',nZ2);
-    % 
-    % [nY3,nZ3]=meshgrid(y,z);
-    % if az>=0
-    %     nX3=ones(size(nX1))*(orbit_sun(end,1)-axoffset);
-    %     set(wallfig2,'XData',nX3,'YData',nY3,'ZData',nZ3);
-    %     if azrise==0
-    %         azrise=1;
-    %         set(wallfig3,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)));
-    %     end
-    % else
-    %     nX3=ones(size(nX1))*(orbit_sun(end,1)+axoffset);
-    %     set(wallfig2,'XData',nX3,'YData',nY3,'ZData',nZ3);
-    %     if azrise==1
-    %         azrise=0;
-    %         set(wallfig2,'XData',nan(size(nX1)),'YData',nan(size(nX1)),'ZData',nan(size(nX1)));
-    %     end
-    % end
 
     pause(0.001);
     % drawnow limitrate
@@ -362,12 +320,6 @@ end
 function draw_orbit(orbitfig, orbit)
     vertices=[orbit;nan(1,3)];
     set(orbitfig, 'Vertices', vertices);
-end
-
-function [nx,ny,nz]=scale_mesh(x,y,z,scale,vgain)
-    nx=x./scale.*vgain;
-    ny=y./scale.*vgain;
-    nz=z./scale.*vgain;
 end
 
 % 모든 radius (planet radius, orbital radius)에 scale factor를 곱한다.
